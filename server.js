@@ -4,8 +4,14 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { middleware } = require("supertokens-node/framework/express");
-const app = express();
 const port = 3001;
+let app = express();
+
+let {errorHandler} = require("supertokens-node/framework/express");
+// ...your API routes
+
+// Add this AFTER all your routes
+app.use(errorHandler())
 
 let {Google, Github, Apple} = ThirdPartyEmailPassword;
 
@@ -16,15 +22,9 @@ supertokens.init({
     apiKey: "h-Ld3dWBb8mrT1np5rZboSCvCJ-=Sw"
  },
  appInfo: {
-
-   // learn more about this on
-   //https://supertokens.com/docs/thirdpartyemailpassword/appinfo
-
    appName: "My Demo App",
    apiDomain: "http://localhost:3001",
    websiteDomain: "http://localhost:3000",
-   apiBasePath: "/auth",
-   websiteBasePath: "/auth"
  },
  recipeList: [
     ThirdPartyEmailPassword.init({
@@ -54,20 +54,12 @@ supertokens.init({
  app.use(
   cors({
     origin: "http://localhost:3000",
-    allowedHeaders: [
-     "content-type",
-     ...supertokens.getAllCORSHeaders()],
+    allowedHeaders: ["content-type",...supertokens.getAllCORSHeaders()],
     credentials: true,
   })
  );
  
  app.use(middleware());
- 
- let {errorHandler} = require("supertokens-node/framework/express");
- // ...your API routes
- 
- // Add this AFTER all your routes
- app.use(errorHandler())
 
 app.get("/", (req, res) => {
  res.send("Hello World!");
